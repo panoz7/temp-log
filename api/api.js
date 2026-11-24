@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
     const log = await fs.readFile('api/log.txt', 'utf8');
 
     res.setHeader('Access-Control-Allow-Origin', '*')
-    res.set('Content-Type', 'application/txt')
+    res.set('Content-Type', 'text/plain')
     res.send(log);
 
 })
