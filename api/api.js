@@ -1,0 +1,37 @@
+const express = require('express');
+const router = express.Router();
+const fs = require('fs/promises');
+require('dotenv').config();
+
+const TEST_TOKEN = process.env.TEST_API_TOKEN;
+
+function requireBearerToken(req, res, next) {
+  const authHeader = req.headers.authorization || '';
+  const [scheme, token] = authHeader.split(' ');
+
+  if (scheme !== 'Bearer' || token !== TEST_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  next();
+}
+
+
+router.post('/', requireBearerToken, async (req, res) => {
+    const body = req.body;
+    await fs.appendFile('api/log.txt', `\n${new Date()} - ${body.temp}`)
+    
+    res.send();
+})
+
+router.get('/', async (req, res) => {   
+
+    const log = await fs.readFile('api/log.txt', 'utf8');
+
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.set('Content-Type', 'application/txt')
+    res.send(log);
+
+})
+
+module.exports = {router};
