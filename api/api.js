@@ -28,9 +28,19 @@ router.get('/', async (req, res) => {
 
     const log = await fs.readFile('api/log.txt', 'utf8');
 
+   const entries = log
+    .split('\n').filter(entry => entry != '')
+    .map(entry => {
+        const [date, temp] = entry.split(' - ');
+        return {
+            date: (new Date(date)).toISOString(),
+            temp: Number(temp)
+        }
+    })
+
     res.setHeader('Access-Control-Allow-Origin', '*')
-    res.set('Content-Type', 'text/plain')
-    res.send(log);
+    res.set('Content-Type', 'application/json')
+    res.json(entries);
 
 })
 
